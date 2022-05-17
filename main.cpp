@@ -1,118 +1,9 @@
-/*#include <iostream>
-#include <SDL.h>
-#include <bits/stdc++.h>
-
-using namespace std;
-
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
-const string WINDOW_TITLE = "An Implementation of Code.org Painter";
-
-void initSDL(SDL_Window* &window, SDL_Renderer* &renderer);
-
-
-void logSDLError(std::ostream& os,
-                 const std::string &msg, bool fatal = false);
-
-void quitSDL(SDL_Window* window, SDL_Renderer* renderer);
-
-void waitUntilKeyPressed();
-
-int main(int argc, char* argv[])
-{
-    SDL_Window* window;
-    SDL_Renderer* renderer;
-    initSDL(window, renderer);
-
-    SDL_RenderClear(renderer);
-
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);   // white
-    SDL_RenderDrawPoint(renderer, SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);   // red
-    SDL_RenderDrawLine(renderer, 100, 100, 200, 200);
-    SDL_Rect filled_rect;
-    filled_rect.x = SCREEN_WIDTH - 400;
-    filled_rect.y = SCREEN_HEIGHT - 150;
-    filled_rect.w = 320;
-    filled_rect.h = 100;
-    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255); // green
-    SDL_RenderFillRect(renderer, &filled_rect);
-
-
-   //Khi thông thường chạy với môi trường bình thường ở nhà
-    SDL_RenderPresent(renderer);
-   //Khi chạy ở máy thực hành WinXP ở trường (máy ảo)
-   //SDL_UpdateWindowSurface(window);
-
-    // Your drawing code here
-    // use SDL_RenderPresent(renderer) to show it
-
-    waitUntilKeyPressed();
-    quitSDL(window, renderer);
-    return 0;
-}
-
-
-void logSDLError(std::ostream& os,
-                 const std::string &msg, bool fatal)
-{
-    os << msg << " Error: " << SDL_GetError() << std::endl;
-    if (fatal) {
-        SDL_Quit();
-        exit(1);
-    }
-}
-
-void initSDL(SDL_Window* &window, SDL_Renderer* &renderer)
-{
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
-        logSDLError(std::cout, "SDL_Init", true);
-
-    window = SDL_CreateWindow(WINDOW_TITLE.c_str(), SDL_WINDOWPOS_CENTERED,
-       SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    //window = SDL_CreateWindow(WINDOW_TITLE.c_str(), SDL_WINDOWPOS_CENTERED,
-       //SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_FULLSCREEN_DESKTOP);
-    if (window == nullptr) logSDLError(std::cout, "CreateWindow", true);
-
-
-    //Khi chạy trong môi trường bình thường (không chạy trong máy ảo)
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED |
-                                              SDL_RENDERER_PRESENTVSYNC);
-    //Khi chạy ở máy ảo (ví dụ tại máy tính trong phòng thực hành ở trường)
-    //renderer = SDL_CreateSoftwareRenderer(SDL_GetWindowSurface(window));
-
-    if (renderer == nullptr) logSDLError(std::cout, "CreateRenderer", true);
-
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-    SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
-}
-
-void quitSDL(SDL_Window* window, SDL_Renderer* renderer)
-{
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-	SDL_Quit();
-}
-
-void waitUntilKeyPressed()
-{
-    SDL_Event e;
-    while (true) {
-        if ( SDL_WaitEvent(&e) != 0 &&
-             (e.type == SDL_KEYDOWN || e.type == SDL_QUIT) )
-            return;
-        SDL_Delay(100);
-    }
-}
-
-*/
-//Using SDL and standard IO
 #include <SDL.h>
 #include <stdio.h>
-
+#include <bits/stdc++.h>
 //Screen dimension constants
-const int SCREEN_WIDTH = 482;
-const int SCREEN_HEIGHT = 640;
+const int SCREEN_WIDTH = 450;
+const int SCREEN_HEIGHT = 480;
 
 //Starts up SDL and creates window
 bool init();
@@ -131,6 +22,7 @@ SDL_Surface* gScreenSurface = NULL;
 
 //The image we will load and show on the screen
 SDL_Surface* gHelloWorld = NULL;
+SDL_Surface* gImage = NULL;
 
 bool init()
 {
@@ -168,10 +60,12 @@ bool loadMedia()
 	bool success = true;
 
 	//Load splash image
-	gHelloWorld = SDL_LoadBMP( "hello_world.bmp" );
+	gHelloWorld = SDL_LoadBMP( "image/background.bmp" );
+	gImage = SDL_LoadBMP("image/red.bmp");
+
 	if( gHelloWorld == NULL )
 	{
-		printf( "Unable to load image %s! SDL Error: %s\n", "hello_world.bmp", SDL_GetError() );
+		printf( "Unable to load image %s! SDL Error: %s\n", "image/background.bmp", SDL_GetError() );
 		success = false;
 	}
 
@@ -183,7 +77,8 @@ void close()
 	//Deallocate surface
 	SDL_FreeSurface( gHelloWorld );
 	gHelloWorld = NULL;
-
+    SDL_FreeSurface( gImage );
+	gImage = NULL;
 	//Destroy window
 	SDL_DestroyWindow( gWindow );
 	gWindow = NULL;
@@ -208,18 +103,34 @@ int main( int argc, char* args[] )
 		}
 		else
 		{
-			//Apply the image
-			SDL_BlitSurface( gHelloWorld, NULL, gScreenSurface, NULL );
+		    SDL_Rect srcRect = {0, 0, 200, 200};
+			SDL_Rect dstRect = {100, 10, 300, 300};
 
+                //Apply the image
+			//x, y, w, h
+			bool quitGame = false;
+            while (! quitGame) {
+            SDL_BlitSurface( gHelloWorld, &srcRect, gScreenSurface, &dstRect);
 			//Update the surface
 			SDL_UpdateWindowSurface( gWindow );
 
 			//Wait two seconds
-			SDL_Delay( 5000 );
+			//SDL_Delay( 2000 );
+			SDL_Delay(500);
+			SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0, 0, 0));
+			SDL_UpdateWindowSurface(gWindow);
+            			SDL_Delay(500);
+
+         /*   if () {
+                srand();
+                break;
+            }*/
+            }
+
 		}
 	}
-
 	//Free resources and close SDL
+
 	close();
 
 	return 0;
