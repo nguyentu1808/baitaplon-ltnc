@@ -1,7 +1,8 @@
 # depslib dependency file v1.0
-1650538604 source:d:\lap trinh\baitaplon_ltnc\main.cpp
-	<SDL.h>
-	<bits/stdc++.h>
+1652404226 source:d:\lap trinh\baitaplon_ltnc\main.cpp
 	<SDL.h>
 	<stdio.h>
+	<bits/stdc++.h>
+
+1652401436 source:d:\lap trinh\baitaplon_ltnc\sdltools.cpp
 
