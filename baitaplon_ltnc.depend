@@ -1,8 +1,22 @@
 # depslib dependency file v1.0
-1652404226 source:d:\lap trinh\baitaplon_ltnc\main.cpp
+1652869736 source:d:\lap trinh\baitaplon_ltnc\main.cpp
+	<SDL.h>
+	<stdio.h>
+	<bits/stdc++.h>
+	"SDLTools.h"
+
+1652959482 source:d:\lap trinh\baitaplon_ltnc\sdltools.cpp
+	"SDLTools.h"
+
+1652950308 d:\lap trinh\baitaplon_ltnc\sdltools.h
 	<SDL.h>
 	<stdio.h>
 	<bits/stdc++.h>
 
-1652401436 source:d:\lap trinh\baitaplon_ltnc\sdltools.cpp
+1652867352 d:\lap trinh\baitaplon_ltnc\startgame.h
+	<bits/stdc++.h>
+	"SDLTools.h"
+
+1652866420 source:d:\lap trinh\baitaplon_ltnc\startgame.cpp
+	"Startgame.h"
 
