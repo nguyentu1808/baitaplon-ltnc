@@ -21,9 +21,35 @@ enum KeyPressSurfaces
 bool init();
 
 //Loads media
+SDL_Surface* loadSurface( std::string path );
+
 bool loadMedia();
 
 //Frees media and shuts down SDL
 void close();
+
+void print(int a,SDL_Rect* x);
+
+SDL_Rect* dstx(int x);
+
+void update();
+
+void make();
+
+void nen(int* f);
+
+void Left();
+
+void Up();
+
+void Right();
+
+void Down();
+
+bool kiemtra(int i,int j);
+
+int check();
+
+void finish(bool &quit);
 
 void start();

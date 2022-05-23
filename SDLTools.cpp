@@ -22,6 +22,7 @@ SDL_Surface* g128 = NULL;
 SDL_Surface* g256 = NULL;
 SDL_Surface* g512 = NULL;
 SDL_Surface* g1024 = NULL;
+SDL_Surface* g2048 = NULL;
 
 SDL_Rect srcRect = {0, 0, 100, 100};
 SDL_Rect dst1 = {10, 10, 300, 300};
@@ -171,7 +172,12 @@ bool loadMedia()
         printf( "Failed to load default image!\n" );
         success = false;
     }
-
+    g2048 = loadSurface("image/2048.bmp");
+	if( g2048 == NULL )
+    {
+        printf( "Failed to load default image!\n" );
+        success = false;
+    }
 	return success;
 }
 
@@ -206,6 +212,8 @@ void close()
 	g512 = NULL;
     SDL_FreeSurface( g1024 );
 	g1024 = NULL;
+	SDL_FreeSurface( g2048 );
+	g2048 = NULL;
 	//Destroy window
 	SDL_DestroyWindow( gWindow );
 	gWindow = NULL;
@@ -226,6 +234,7 @@ void print(int a,SDL_Rect* x)
     if (a==256) SDL_BlitSurface( g256, &srcRect, gScreenSurface, x);
     if (a==512) SDL_BlitSurface( g512, &srcRect, gScreenSurface, x);
     if (a==1024) SDL_BlitSurface( g1024, &srcRect, gScreenSurface, x);
+    if (a==2048) SDL_BlitSurface( g2048, &srcRect, gScreenSurface, x);
 }
 SDL_Rect* dstx(int x)
 {
@@ -273,7 +282,7 @@ void make()
         for (int j=0;j<4;j++)
             if (a[i][j]==0 && v==d) {x=i;y=j;v++;}
                 else if (a[i][j]==0) v++;
-    if (rand()%10==5) a[x][y]=4;
+    if (rand()%20==5) a[x][y]=4;
     else a[x][y]=2;
     }
 }
@@ -378,11 +387,30 @@ int check()
     for (int i=0;i<4;i++)
         for (int j=0;j<4;j++)
         {
-            if (a[i][j]==1024) return 0;
+            if (a[i][j]==2048) return 0;
             if (a[i][j]==0) return 2;
             if (kiemtra(i,j)) k=2;
         }
     return k;
+}
+void finish(bool &quit)
+{
+    if (check()==1)
+        {
+            SDL_Delay(5000);
+            SDL_BlitSurface( gLose, NULL, gScreenSurface, NULL);
+            SDL_UpdateWindowSurface( gWindow );
+            SDL_Delay(2000);
+            quit=true;
+        }
+    if (check()==0)
+        {
+            SDL_Delay(5000);
+            SDL_BlitSurface( gWin, NULL, gScreenSurface, NULL);
+            SDL_UpdateWindowSurface( gWindow );
+            SDL_Delay(2000);
+            quit=true;
+        }
 }
 void start()
 {
@@ -406,6 +434,9 @@ void start()
                 for (int j=0;j<4;j++) a[i][j]=0;
             make();
             make();
+            a[0][1]=1024;
+            a[0][0]=1024;
+            a[1][1]=1024;
             update();
             while (! quit)
             {
@@ -421,82 +452,22 @@ void start()
 						{
 							case SDLK_UP:
                             Up();
-                            if (check()==1)
-                            {
-                                SDL_Delay(5000);
-                                SDL_BlitSurface( gLose, NULL, gScreenSurface, NULL);
-                                SDL_UpdateWindowSurface( gWindow );
-                                SDL_Delay(2000);
-                                quit=true;
-                            }
-                            if (check()==0)
-                            {
-                                SDL_Delay(5000);
-                                SDL_BlitSurface( gWin, NULL, gScreenSurface, NULL);
-                                SDL_UpdateWindowSurface( gWindow );
-                                SDL_Delay(2000);
-                                quit=true;
-                            }
+                            finish(quit);
 							break;
 
 							case SDLK_DOWN:
                             Down();
-                            if (check()==1)
-                            {
-                                SDL_Delay(5000);
-                                SDL_BlitSurface( gLose, NULL, gScreenSurface, NULL);
-                                SDL_UpdateWindowSurface( gWindow );
-                                SDL_Delay(2000);
-                                quit=true;
-                            }
-                            if (check()==0)
-                            {
-                                SDL_Delay(5000);
-                                SDL_BlitSurface( gWin, NULL, gScreenSurface, NULL);
-                                SDL_UpdateWindowSurface( gWindow );
-                                SDL_Delay(2000);
-                                quit=true;
-                            }
+                            finish(quit);
 							break;
 
 							case SDLK_LEFT:
                             Left();
-                            if (check()==1)
-                            {
-                                SDL_Delay(5000);
-                                SDL_BlitSurface( gLose, NULL, gScreenSurface, NULL);
-                                SDL_UpdateWindowSurface( gWindow );
-                                SDL_Delay(2000);
-                                quit=true;
-                            }
-                            if (check()==0)
-                            {
-                                SDL_Delay(5000);
-                                SDL_BlitSurface( gWin, NULL, gScreenSurface, NULL);
-                                SDL_UpdateWindowSurface( gWindow );
-                                SDL_Delay(2000);
-                                quit=true;
-                            }
+                            finish(quit);
 							break;
 
 							case SDLK_RIGHT:
                             Right();
-                            if (check()==1)
-                            {
-                                SDL_Delay(5000);
-                                SDL_BlitSurface( gLose, NULL, gScreenSurface, NULL);
-                                SDL_UpdateWindowSurface( gWindow );
-                                SDL_Delay(2000);
-                                quit=true;
-                            }
-                            if (check()==0)
-                            {
-                                SDL_Delay(5000);
-                                SDL_BlitSurface( gWin, NULL, gScreenSurface, NULL);
-                                SDL_UpdateWindowSurface( gWindow );
-                                SDL_Delay(2000);
-                                quit=true;
-                            }
+                            finish(quit);
 							break;
 						}
 					}
